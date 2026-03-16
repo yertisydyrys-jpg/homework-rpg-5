@@ -14,45 +14,52 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("=== Homework 5 Demo: Decorator + Facade ===\n");
 
-        // TODO: Create a hero and a boss with your own meaningful stats.
-        HeroProfile hero = new HeroProfile("TODO Hero", 100);
-        BossEnemy boss = new BossEnemy("TODO Boss", 120, 15);
-
-        // TODO: Start with a base action and then create several decorated versions.
-        AttackAction basic = new BasicAttack("Strike", 10);
-        AttackAction enhanced = new FireRuneDecorator(
+        AttackAction basic = new BasicAttack("Shadow Strike", 14);
+        AttackAction fireAttack = new FireRuneDecorator(basic);
+        AttackAction poisonThenCrit = new CriticalFocusDecorator(new PoisonCoatingDecorator(basic));
+        AttackAction fullCombo = new FireRuneDecorator(
                 new PoisonCoatingDecorator(
                         new CriticalFocusDecorator(basic)
                 )
         );
+        AttackAction changedOrder = new CriticalFocusDecorator(
+                new FireRuneDecorator(
+                        new PoisonCoatingDecorator(basic)
+                )
+        );
 
         System.out.println("--- Decorator Preview ---");
-        System.out.println("Base action: " + basic.getActionName());
-        System.out.println("Base damage: " + basic.getDamage());
-        System.out.println("Base effects: " + basic.getEffectSummary());
-        System.out.println();
-        System.out.println("Enhanced action: " + enhanced.getActionName());
-        System.out.println("Enhanced damage: " + enhanced.getDamage());
-        System.out.println("Enhanced effects: " + enhanced.getEffectSummary());
+        printActionPreview("Base action", basic);
+        printActionPreview("Fire upgrade", fireAttack);
+        printActionPreview("Poison then critical", poisonThenCrit);
+        printActionPreview("Full combo", fullCombo);
+        printActionPreview("Same decorators, different order", changedOrder);
 
-        // TODO: Replace the placeholder preview above with richer proof of runtime composition.
+        System.out.println("Observation: changing decorator order changes the final damage.\n");
 
-        System.out.println("\n--- Facade Preview ---");
+        System.out.println("--- Facade Preview ---");
+        HeroProfile hero = new HeroProfile("Arin the Ranger", 110);
+        BossEnemy boss = new BossEnemy("Infernal Warden", 95, 15);
+
         DungeonFacade facade = new DungeonFacade().setRandomSeed(42L);
-        AdventureResult result = facade.runAdventure(hero, boss, enhanced);
+        AdventureResult result = facade.runAdventure(hero, boss, fullCombo);
 
         System.out.println("Winner: " + result.getWinner());
         System.out.println("Rounds: " + result.getRounds());
         System.out.println("Reward: " + result.getReward());
+        System.out.println("Battle log:");
         for (String line : result.getLog()) {
-            System.out.println(line);
+            System.out.println("- " + line);
         }
 
-        // TODO: Expand this demo so it clearly proves:
-        // 1) multiple decorator combinations
-        // 2) one full dungeon run through the facade
-        // 3) readable final summary
-
         System.out.println("\n=== Demo Complete ===");
+    }
+
+    private static void printActionPreview(String label, AttackAction action) {
+        System.out.println(label + ":");
+        System.out.println("  Name: " + action.getActionName());
+        System.out.println("  Damage: " + action.getDamage());
+        System.out.println("  Effects: " + action.getEffectSummary());
+        System.out.println();
     }
 }
