@@ -1,0 +1,90 @@
+@startuml
+class Main {
+  +main(args : String[]) : void
+}
+
+class DungeonFacade {
+  -preparationService : PreparationService
+  -battleService : BattleService
+  -rewardService : RewardService
+  +setRandomSeed(seed : long) : DungeonFacade
+  +runAdventure(hero : HeroProfile, boss : BossEnemy, action : AttackAction) : AdventureResult
+}
+
+class PreparationService {
+  +prepare(hero : HeroProfile, boss : BossEnemy, action : AttackAction) : String
+}
+
+class BattleService {
+  +setRandomSeed(seed : long) : BattleService
+  +battle(hero : HeroProfile, boss : BossEnemy, action : AttackAction) : AdventureResult
+}
+
+class RewardService {
+  +determineReward(battleResult : AdventureResult) : String
+}
+
+class AdventureResult {
+  -winner : String
+  -rounds : int
+  -reward : String
+  -heroVictory : boolean
+  -log : List<String>
+  +getWinner() : String
+  +setWinner(winner : String) : void
+  +getRounds() : int
+  +setRounds(rounds : int) : void
+  +getReward() : String
+  +setReward(reward : String) : void
+  +isHeroVictory() : boolean
+  +setHeroVictory(heroVictory : boolean) : void
+  +addLine(line : String) : void
+  +getLog() : List<String>
+}
+
+class HeroProfile {
+  -name : String
+  -health : int
+  +getName() : String
+  +getHealth() : int
+  +takeDamage(amount : int) : void
+  +isAlive() : boolean
+}
+
+class BossEnemy {
+  -name : String
+  -health : int
+  -attackPower : int
+  +getName() : String
+  +getHealth() : int
+  +getAttackPower() : int
+  +takeDamage(amount : int) : void
+  +isAlive() : boolean
+}
+
+interface AttackAction {
+  +getActionName() : String
+  +getDamage() : int
+  +getEffectSummary() : String
+}
+
+Main --> DungeonFacade
+Main --> HeroProfile
+Main --> BossEnemy
+Main --> AttackAction
+DungeonFacade *-- PreparationService
+DungeonFacade *-- BattleService
+DungeonFacade *-- RewardService
+DungeonFacade --> AdventureResult
+DungeonFacade --> HeroProfile
+DungeonFacade --> BossEnemy
+DungeonFacade --> AttackAction
+PreparationService --> HeroProfile
+PreparationService --> BossEnemy
+PreparationService --> AttackAction
+BattleService --> HeroProfile
+BattleService --> BossEnemy
+BattleService --> AttackAction
+BattleService --> AdventureResult
+RewardService --> AdventureResult
+@enduml
