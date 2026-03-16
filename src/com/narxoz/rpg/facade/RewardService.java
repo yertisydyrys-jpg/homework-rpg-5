@@ -2,10 +2,18 @@ package com.narxoz.rpg.facade;
 
 public class RewardService {
     public String determineReward(AdventureResult battleResult) {
-        // TODO: Decide reward rules based on battle outcome.
         if (battleResult == null) {
-            return "TODO";
+            return "No reward: adventure result is missing.";
         }
-        return "TODO";
+        if ("Draw".equals(battleResult.getWinner())) {
+            return "Consolation prize: 50 gold for a mutual knockout";
+        }
+        if (!battleResult.isHeroVictory()) {
+            return "No reward: the hero was defeated.";
+        }
+        if (battleResult.getRounds() <= 3) {
+            return "Legendary chest: 500 gold, Phoenix Bow and Ember Trophy";
+        }
+        return "Victory chest: 250 gold and a rare upgrade shard";
     }
 }
